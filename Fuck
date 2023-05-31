@@ -1,0 +1,97 @@
+   local Creator = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors%20Entity%20Spawner/Source.lua"))()
+		-- Create entity
+		local entity = Creator.createEntity({
+			Model = "11535812658",
+			Speed = 40,
+			DelayTime = 0,
+			HeightOffset = 0,
+			CanKill = true,
+			BreakLights = true,
+			FlickerLights = {
+				false,
+				80,
+			},
+			Cycles = {
+				Min = 1,
+				Max = 1,
+				WaitTime = 0.1,
+			},
+			CamShake = {
+				true,
+				{5, 15, 0.1, 1},
+				10,
+			},
+			Jumpscare = {
+				true, -- Enabled ('false' if you don't want jumpscare)
+				{
+					Image1 = "rbxassetid://11394027278", -- Image1 url
+					Image2 = "rbxassetid://11395249153", -- Image2 url
+					Shake = true,
+					Sound1 = {
+						10483790459, -- SoundId
+						{ Volume = 0.5 }, -- Sound properties
+					},
+					Sound2 = {
+						10483837590, -- SoundId
+						{ Volume = 0.5 }, -- Sound properties
+					},
+					Flashing = {
+						true, -- Enabled
+						Color3.fromRGB(48, 25, 52), -- Color
+					},
+					Tease = {
+						false, -- Enabled ('false' if you don't want tease)
+						Min = 1,
+						Max = 1,
+					},
+				},
+			},
+			CustomDialog = {"You died to who you call Silence","Stay as silent as possible when you suspect its coming, so you know when to hide!","Its slow, but hard to hear","so hide!" }
+		})
+
+		local cameraShaker = require(game.ReplicatedStorage.CameraShaker)
+		local camera = workspace.CurrentCamera
+
+		local camShake = cameraShaker.new(Enum.RenderPriority.Camera.Value, function(cf)
+			camera.CFrame = camera.CFrame * cf
+		end)
+		-----[[ Advanced ]]-----
+		entity.Debug.OnEntitySpawned = function(entityModel)
+
+		end
+
+		entity.Debug.OnEntityDespawned = function(entityModel)
+			if getgenv().death == false then
+				getgenv().Title = "Eyes Closed Ears open" --Title Here
+				getgenv().Description = "Stay silent or I wont be heard" --Description Here
+				getgenv().Reason = "Encounter Silence" --Reason Here
+				getgenv().BadgeId = 2129524598  --Replace Number with Your Badge ID
+				getgenv().Category = 10 --You can replace the Category or dont
+
+				local Unlock = require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Lobby.RemoteListener.Modules.AchievementUnlock)
+				local Achievements = debug.getupvalue(Unlock, 1)
+				for i,v in pairs(require(game:GetService("ReplicatedStorage").Achievements)) do
+					v.Title = getgenv().Title
+					v.Desc = getgenv().Description
+					v.Reason = getgenv().Reason
+					v.BadgeId = getgenv().BadgeId
+					v.Category = getgenv().Category
+				end
+				Unlock(nil,"Join")
+			end
+		end
+
+		entity.Debug.OnEntityStartMoving = function(entityModel)
+
+		end
+
+		entity.Debug.OnEntityFinishedRebound = function(entityModel)
+
+		end
+
+		entity.Debug.OnDeath = function()
+			getgenv().death = true
+		end
+		---------------------------
+		-- Run the created entity
+		Creator.runEntity(entity)
